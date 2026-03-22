@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba</title>
+</head>
+<body>
+    <h1>Prueba de redes</h1>
+    <div id="box-salas">
+    </div>
+    <div id="error">
+    </div>
+    <div>
+        <button id="nueva-sala">Nueva sala</button>
+    </div>
+
+    <script>
+        const button = document.getElementById("nueva-sala");
+        const salasContainer = document.getElementById("box-salas");
+        const textError = document.getElementById("error");
+        const nuevaCardSala = (sala) => {
+            return `
+                <div>
+                    <p>ID de sala: ${sala}</p>
+                </div>
+            `
+        };
+
+        const cargarSalas = async () => {
+            try {
+                const pedirSalas = await fetch('http://127.0.0.1:8000/conexion/crearSala/');
+                const salas = await pedirSalas.json();
+
+                console.log("hola",salas);
+                
+                if (salas.length != 0) {
+                    textError.innerHTML = '';
+                    salasContainer.innerHTML = "";
+                    for (const sala of salas) {
+                        const card = nuevaCardSala(sala.id_sala);
+                        salasContainer.innerHTML += card;
+                    }
+                    
+                } else {
+                    textError.innerHTML = 'No hay salas por ahora.'
+                }
+            } catch (error) {
+                console.error(`Error: ${error}`)
+            }
+        }
+
+        button.addEventListener("click", async () => {
+            const crearSala = await fetch('http://127.0.0.1:8000/conexion/crearSala/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "crear_sala": 1
+                })
+            });
+            const nuevaSala = await crearSala.json();
+            await cargarSalas();
+        });
+
+        cargarSalas();
+    </script>
+</body>
+</html>
