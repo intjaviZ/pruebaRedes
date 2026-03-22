@@ -19,9 +19,7 @@ class CrearSala(APIView):
         longitud_id = 4
         caracteres = string.ascii_uppercase + string.digits
         while True:
-            # Generamos un ID tipo 'A7B2'
             nuevo_id = ''.join(secrets.choice(caracteres) for _ in range(longitud_id))
-            # Verificamos que no exista en nuestro diccionario de salas
             if nuevo_id not in state:
                 return nuevo_id
     
